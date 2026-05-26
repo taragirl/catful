@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Catful - 猫ちゃんに、Catfulな毎日を</title>
+  <style>
+    /* ===== RESET & VARIABLES ===== */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --bg:          #FAF7F2;
+      --bg-cream:    #FDFAF5;
+      --bg-warm:     #F0EBE0;
+      --sage:        #8B9E6B;
+      --sage-dark:   #6B7D52;
+      --sage-pale:   #E4EDD0;
+      --brown:       #3D2B1F;
+      --brown-mid:   #6B4F3A;
+      --brown-light: #9C7B65;
+      --header-h:    68px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Hiragino Mincho ProN', 'Yu Mincho', 'HGS明朝E', Georgia, serif;
+      background-color: var(--bg);
+      color: var(--brown);
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+
+    img { max-width: 100%; height: auto; display: block; }
+
+    /* ===== HEADER ===== */
+    header {
+      position: fixed;
+      inset: 0 0 auto;
+      z-index: 100;
+      height: var(--header-h);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 60px;
+      background: rgba(250, 247, 242, 0.93);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      text-decoration: none;
+      color: var(--brown);
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+    }
+
+    .logo svg { width: 30px; height: 30px; flex-shrink: 0; }
+
+    .desktop-nav {
+      display: flex;
+      gap: 36px;
+      list-style: none;
+    }
+
+    .desktop-nav a {
+      text-decoration: none;
+      font-size: 13.5px;
+      font-family: 'Hiragino Kaku Gothic ProN', 'Meiryo', sans-serif;
+      color: var(--brown);
+      transition: color 0.2s;
+    }
+    .desktop-nav a:hover { color: var(--sage-dark); }
+
+    .header-icons {
+      display: flex;
+      gap: 16px;
+    }
+
+    .header-icons button {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--brown);
+      display: flex;
+      align-items: center;
+      padding: 4px;
+      transition: color 0.2s;
+    }
+    .header-icons button:hover { color: var(--sage-dark); }
+
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      background: none;
+      border: none;
+      padding: 6px 4px;
+    }
+
+    .hamburger span {
+      display: block;
+      width: 24px;
+      height: 1.5px;
+      background: var(--brown);
+      border-radius: 2px;
+      transition: all 0.3s;
+    }
+
+    /* ===== MOBILE MENU ===== */
+    .mobile-menu {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 99;
+      background: var(--bg);
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 40px;
+    }
+
+    .mobile-menu.is-open { display: flex; }
+
+    .mobile-menu a {
+      font-size: 20px;
+      text-decoration: none;
+      color: var(--brown);
+      font-family: 'Hiragino Kaku Gothic ProN', 'Meiryo', sans-serif;
+      transition: color 0.2s;
+    }
+    .mobile-menu a:hover { color: var(--sage-dark); }
+
+    .mobile-close {
+      position: absolute;
+      top: 20px;
+      right: 24px;
+      background: none;
+      border: none;
+      font-size: 28px;
+      cursor: pointer;
+      color: var(--brown);
+      line-height: 1;
+    }
+
+    /* ===== HERO ===== */
+    .hero {
+      background: linear-gradient(115deg, #F7F3EC 0%, #EDE7DB 40%, #E6DFCF 100%);
+      padding-top: var(--header-h);
+    }
+
+    .hero-inner {
+      display: grid;
+      grid-template-areas:
+        "title  image"
+        "desc   image"
+        "cta    image";
+      grid-template-columns: 48% 52%;
+      grid-template-rows: 1fr auto auto;
+      min-height: calc(100vh - var(--header-h));
+      max-width: 1440px;
+      margin: 0 auto;
+    }
+
+    .hero-title {
+      grid-area: title;
+      align-self: flex-end;
+      padding: 60px 32px 24px 80px;
+      font-size: 54px;
+      line-height: 1.3;
+      letter-spacing: 0.02em;
+      color: var(--brown);
+    }
+
+    .hero-desc {
+      grid-area: desc;
+      padding: 0 32px 0 80px;
+      font-size: 15px;
+      line-height: 2;
+      color: var(--brown-mid);
+      font-family: 'Hiragino Kaku Gothic ProN', 'Meiryo', sans-serif;
+    }
+
+    .hero-cta {
+      grid-area: cta;
+      padding: 32px 32px 64px 80px;
+    }
+
+    .hero-image-wrap {
+      grid-area: image;
+      overflow: hidden;
+    }
+
+    .hero-image-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center 20%;
+    }
+
+    /* ===== BUTTONS ===== */
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--sage);
+      color: #fff;
+      text-decoration: none;
+      padding: 13px 26px;
+      border-radius: 100px;
+      font-size: 14px;
+      font-family: 'Hiragino Kaku Gothic ProN', 'Meiryo', sans-serif;
+      transition: background 0.2s, transform 0.2s;
+    }
+    .btn-primary:hover { background: var(--sage-dark); transform: translateY(-2px); }
+    .btn-primary svg { width: 14px; height: 14px; flex-shrink: 0; }
+
+    /* ===== PRODUCT SECTION ===== */
+    .section-products {
+      background: var(--bg-cream);
+      padding: 100px 80px;
+      text-align: center;
+    }
+
+    .section-heading {
+      font-size: 22px;
+      letter-spacing: 0.04em;
+      color: var(--brown);
+      margin-bottom: 64px;
+    }
+
+    .products-grid {
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      gap: 60px;
+      max-width: 920px;
+      margin: 0 auto;
+    }
+
+    .product-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 18px;
+    }
+
+    /* Individual pouch via background-image crop */
+    .product-pouch {
+      width: 130px;
+      height: 168px;
+      border-radius: 10px;
+      background-image: url('./Cat_food_pouch_packaging_design.jpeg');
+      background-repeat: no-repeat;
+      background-size: 300% auto;
+      background-color: #e8e4dc;
+      box-shadow: 0 4px 24px rgba(61, 43, 31, 0.10);
+    }
+
+    .product-pouch--chicken { background-position: 8%   center; }
+    .product-pouch--fish    { background-position: 50%  center; }
+    .product-pouch--beef    { background-position: 92%  center; }
+
+    .product-card h3 {
+      font-size: 17px;
+      color: var(--brown);
+      margin-bottom: 3px;
+    }
+
+    .product-card p {
+      font-size: 13px;
+      color: var(--brown-light);
+      font-family: 'Hiragino Kaku Gothic ProN', 'Meiryo', sans-serif;
+    }
+
+    /* decorative dot dividers between products */
+    .product-divider {
+      align-self: center;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      opacity: 0.25;
+      padding-bottom: 24px;
+    }
+    .product-divider span {
+      display: block;
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: var(--brown);
+    }
+
+    /* ===== FEATURES ===== */
+    .section-features {
+      background: var(--bg-warm);
+      padding: 80px;
+    }
+
+    .features-row {
+      display: flex;
+      justify-content: center;
+      gap: 56px;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .feature {
+      flex: 1;
+      max-width: 300px;
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+    }
+
+    .feature-icon {
+      width: 46px;
+      height: 46px;
+      flex-shrink: 0;
+      border-radius: 50%;
+      background: var(--sage-pale);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .feature-icon svg { width: 22px; height: 22px; }
+
+    .feature h3 {
+      font-size: 15px;
+      color: var(--brown);
+      margin-bottom: 7px;
+      line-height: 1.4;
+    }
+
+    .feature p {
+      font-size: 13px;
+      color: var(--brown-mid);
+      font-family: 'Hiragino Kaku Gothic ProN', 'Meiryo', sans-serif;
+      line-height: 1.8;
+    }
+
+    /* ===== VIDEO SECTION ===== */
+    .section-video {
+      background: var(--bg-cream);
+      padding: 100px 80px;
+      text-align: center;
+    }
+
+    .section-video .section-heading {
+      margin-bottom: 48px;
+    }
+
+    .video-wrap {
+      max-width: 900px;
+      margin: 0 auto;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 8px 48px rgba(61, 43, 31, 0.13);
+      background: #1a1007;
+    }
+
+    .video-wrap video {
+      width: 100%;
+      display: block;
+    }
+
+    /* ===== CTA BANNER ===== */
+    .section-cta {
+      background: linear-gradient(120deg, #74895A 0%, #8B9E6B 55%, #96AA72 100%);
+      padding: 64px 100px;
+      display: flex;
+      align-items: center;
+      gap: 64px;
+    }
+
+    .cta-left { flex: 1; }
+
+    .cta-badge {
+      display: inline-block;
+      background: rgba(255, 255, 255, 0.22);
+      color: rgba(255, 255, 255, 0.92);
+      font-size: 12px;
+      padding: 4px 14px;
+      border-radius: 20px;
+      font-family: 'Hiragino Kaku Gothic ProN', 'Meiryo', sans-serif;
+      margin-bottom: 16px;
+      letter-spacing: 0.08em;
+    }
+
+    .cta-title {
+      font-size: 34px;
+      color: #fff;
+      margin-bottom: 8px;
+    }
+
+    .cta-subtitle {
+      font-size: 14px;
+      color: rgba(255, 255, 255, 0.82);
+      font-family: 'Hiragino Kaku Gothic ProN', 'Meiryo', sans-serif;
+      margin-bottom: 32px;
+    }
+
+    .cta-actions {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+    }
+
+    .shipping-badge {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #fff;
+      font-size: 12px;
+      font-family: 'Hiragino Kaku Gothic ProN', 'Meiryo', sans-serif;
+    }
+
+    .shipping-circle {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      border: 2px solid rgba(255, 255, 255, 0.65);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      font-weight: bold;
+      color: #fff;
+      text-align: center;
+      line-height: 1.3;
+      font-family: 'Hiragino Kaku Gothic ProN', sans-serif;
+      flex-shrink: 0;
+    }
+
+    .btn-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--brown);
+      color: #fff;
+      text-decoration: none;
+      padding: 14px 30px;
+      border-radius: 100px;
+      font-size: 14px;
+      font-family: 'Hiragino Kaku Gothic ProN', 'Meiryo', sans-serif;
+      transition: background 0.2s, transform 0.2s;
+      white-space: nowrap;
+    }
+    .btn-cta:hover { background: #2a1d12; transform: translateY(-2px); }
+    .btn-cta svg { width: 14px; height: 14px; flex-shrink: 0; }
+
+    .cta-right {
+      flex: 0 0 280px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .cta-right img {
+      max-width: 100%;
+      height: 180px;
+      object-fit: contain;
+      filter: drop-shadow(0 6px 20px rgba(0, 0, 0, 0.22));
+    }
+
+    /* ===== FOOTER ===== */
+    footer {
+      background: var(--brown);
+      color: rgba(255, 255, 255, 0.55);
+      text-align: center;
+      padding: 28px 24px;
+      font-size: 12px;
+      font-family: 'Hiragino Kaku Gothic ProN', 'Meiryo', sans-serif;
+      letter-spacing: 0.05em;
+    }
+
+    /* ===== TABLET ===== */
+    @media (max-width: 1024px) {
+      header { padding: 0 36px; }
+
+      .hero-title { font-size: 44px; padding-left: 40px; }
+      .hero-desc  { padding-left: 40px; }
+      .hero-cta   { padding-left: 40px; }
+
+      .section-products,
+      .section-video { padding: 80px 40px; }
+      .section-features { padding: 64px 40px; }
+      .section-cta { padding: 52px 48px; gap: 40px; }
+
+      .features-row { gap: 36px; }
+      .products-grid { gap: 36px; }
+    }
+
+    /* ===== MOBILE ===== */
+    @media (max-width: 768px) {
+      :root { --header-h: 56px; }
+
+      header { padding: 0 20px; }
+      .desktop-nav, .header-icons { display: none; }
+      .hamburger { display: flex; }
+
+      /* Hero mobile: heading+image side by side, then desc+cta below */
+      .hero-inner {
+        grid-template-areas:
+          "title  image"
+          "desc   desc"
+          "cta    cta";
+        grid-template-columns: 55% 45%;
+        grid-template-rows: auto auto auto;
+        min-height: 0;
+      }
+
+      .hero-title {
+        font-size: 32px;
+        padding: 28px 12px 20px 24px;
+        align-self: center;
+      }
+
+      .hero-image-wrap {
+        height: 260px;
+      }
+
+      .hero-desc {
+        padding: 0 24px 16px;
+        font-size: 14px;
+      }
+
+      .hero-cta {
+        padding: 0 24px 44px;
+      }
+
+      /* Products */
+      .section-products { padding: 60px 24px; }
+
+      .section-heading { font-size: 17px; margin-bottom: 40px; }
+
+      .products-grid {
+        flex-direction: column;
+        gap: 0;
+        align-items: stretch;
+      }
+
+      .product-divider { display: none; }
+
+      .product-card {
+        flex-direction: row;
+        align-items: center;
+        gap: 20px;
+        text-align: left;
+        padding: 20px 0;
+        border-bottom: 1px solid rgba(61,43,31,0.08);
+      }
+
+      .product-card:last-child { border-bottom: none; }
+
+      .product-pouch {
+        width: 88px;
+        height: 114px;
+        flex-shrink: 0;
+        background-size: 300% auto;
+      }
+
+      .product-card h3 { font-size: 16px; }
+
+      /* Features */
+      .section-features { padding: 60px 24px; }
+
+      .features-row {
+        flex-direction: column;
+        gap: 28px;
+      }
+
+      .feature { max-width: 100%; }
+
+      /* Video */
+      .section-video { padding: 60px 20px; }
+      .video-wrap { border-radius: 12px; }
+
+      /* CTA */
+      .section-cta {
+        flex-direction: column;
+        padding: 52px 24px;
+        text-align: center;
+        gap: 32px;
+      }
+
+      .cta-title { font-size: 26px; }
+      .cta-actions { flex-direction: column; align-items: center; }
+      .cta-right { flex: none; }
+      .cta-right img { height: 140px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Mobile menu overlay -->
+  <div class="mobile-menu" id="mobileMenu" role="dialog" aria-modal="true" aria-label="ナビゲーションメニュー">
+    <button class="mobile-close" id="menuClose" aria-label="メニューを閉じる">✕</button>
+    <a href="#about"    onclick="closeMobileMenu()">Catfulについて</a>
+    <a href="#products" onclick="closeMobileMenu()">商品ラインナップ</a>
+    <a href="#features" onclick="closeMobileMenu()">こだわり</a>
+    <a href="#faq"      onclick="closeMobileMenu()">よくあるご質問</a>
+  </div>
+
+  <!-- ===== HEADER ===== -->
+  <header>
+    <a href="#" class="logo" aria-label="Catful トップへ">
+      <!-- Cat silhouette logo -->
+      <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M7 8 L7 17 Q7 25 16 25 Q25 25 25 17 L25 8 L21.5 12 L16 10 L10.5 12 Z" fill="#3D2B1F"/>
+        <circle cx="13" cy="17" r="1.4" fill="#FAF7F2"/>
+        <circle cx="19" cy="17" r="1.4" fill="#FAF7F2"/>
+        <path d="M14 20.5 Q16 22 18 20.5" stroke="#FAF7F2" stroke-width="1.2" stroke-linecap="round" fill="none"/>
+      </svg>
+      Catful
+    </a>
+
+    <ul class="desktop-nav" role="list">
+      <li><a href="#about">Catfulについて</a></li>
+      <li><a href="#products">商品ラインナップ</a></li>
+      <li><a href="#features">こだわり</a></li>
+      <li><a href="#faq">よくあるご質問</a></li>
+    </ul>
+
+    <div class="header-icons">
+      <button aria-label="アカウント">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+          <circle cx="12" cy="7" r="4"/>
+        </svg>
+      </button>
+      <button aria-label="ショッピングカート">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
+          <line x1="3" y1="6" x2="21" y2="6"/>
+          <path d="M16 10a4 4 0 0 1-8 0"/>
+        </svg>
+      </button>
+    </div>
+
+    <button class="hamburger" id="hamburger" aria-label="メニューを開く" aria-expanded="false">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+  </header>
+
+  <!-- ===== HERO ===== -->
+  <section class="hero" id="about">
+    <div class="hero-inner">
+
+      <h1 class="hero-title">猫ちゃんに、<br>Catfulな 毎日を</h1>
+
+      <div class="hero-image-wrap">
+        <img
+          src="./Cat_sitting_next_to_food.jpeg"
+          alt="猫ちゃんとCatfulのごはん"
+          loading="eager"
+        >
+      </div>
+
+      <p class="hero-desc">
+        自然の恵みを、やさしく美味しく。<br>
+        毎日のごはんで、もっと健やかに、<br>
+        もっとしあわせに。
+      </p>
+
+      <div class="hero-cta">
+        <a href="#products" class="btn-primary">
+          Catfulについて詳しく
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"/>
+          </svg>
+        </a>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ===== PRODUCT SECTION ===== -->
+  <section class="section-products" id="products">
+    <h2 class="section-heading">毎日のごはんに、自然のよろこびを 🌿</h2>
+
+    <div class="products-grid">
+
+      <!-- Chicken -->
+      <div class="product-card">
+        <div class="product-pouch product-pouch--chicken" role="img" aria-label="チキン イン ゼリー パッケージ"></div>
+        <div>
+          <h3>チキン イン ゼリー</h3>
+          <p>やさしいチキンのうまみ</p>
+        </div>
+      </div>
+
+      <div class="product-divider" aria-hidden="true">
+        <span></span><span></span><span></span>
+      </div>
+
+      <!-- Fish -->
+      <div class="product-card">
+        <div class="product-pouch product-pouch--fish" role="img" aria-label="フィッシュ イン ゼリー パッケージ"></div>
+        <div>
+          <h3>フィッシュ イン ゼリー</h3>
+          <p>香り豊かな白身魚</p>
+        </div>
+      </div>
+
+      <div class="product-divider" aria-hidden="true">
+        <span></span><span></span><span></span>
+      </div>
+
+      <!-- Beef -->
+      <div class="product-card">
+        <div class="product-pouch product-pouch--beef" role="img" aria-label="ビーフ イン ゼリー パッケージ"></div>
+        <div>
+          <h3>ビーフ イン ゼリー</h3>
+          <p>コク深いビーフの味わい</p>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ===== FEATURE SECTION ===== -->
+  <section class="section-features" id="features">
+    <div class="features-row">
+
+      <div class="feature">
+        <div class="feature-icon">
+          <!-- Leaf icon -->
+          <svg viewBox="0 0 24 24" fill="none" stroke="#6B7D52" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2C6.5 2 2 6.5 2 12c2-4 5.5-6 10-5 4.5 1 7.5 4.5 8 9.5C19.5 10 17 4 12 2z"/>
+            <line x1="12" y1="12" x2="12" y2="22"/>
+          </svg>
+        </div>
+        <div>
+          <h3>自然素材にこだわり</h3>
+          <p>新鮮な国内食素材を使用し、合成着色料・香料・保存料は不使用。毎日のごはんも、安心してお召し上がりいただけます。</p>
+        </div>
+      </div>
+
+      <div class="feature">
+        <div class="feature-icon">
+          <!-- Shield icon -->
+          <svg viewBox="0 0 24 24" fill="none" stroke="#6B7D52" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+          </svg>
+        </div>
+        <div>
+          <h3>安心の品質</h3>
+          <p>人工添加物を一切使っていない工場で製造。毎日のごはんでも安心してお使いください。</p>
+        </div>
+      </div>
+
+      <div class="feature">
+        <div class="feature-icon">
+          <!-- Heart icon -->
+          <svg viewBox="0 0 24 24" fill="none" stroke="#6B7D52" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+          </svg>
+        </div>
+        <div>
+          <h3>猫ちゃん思いのやさしさ</h3>
+          <p>食べやすいパウチで仕上げ、猫ちゃんが喜ぶ仕様にこだわりました。</p>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ===== VIDEO SECTION ===== -->
+  <section class="section-video" id="video">
+    <h2 class="section-heading">Catfulのこだわり、動画でみる</h2>
+    <div class="video-wrap">
+      <video
+        controls
+        preload="metadata"
+        aria-label="Catful CM動画"
+      >
+        <source src="./catful.mp4" type="video/mp4">
+        <p>お使いのブラウザは動画再生に対応していません。</p>
+      </video>
+    </div>
+  </section>
+
+  <!-- ===== CTA BANNER ===== -->
+  <section class="section-cta" id="trial">
+    <div class="cta-left">
+      <span class="cta-badge">特別セット</span>
+      <h2 class="cta-title">はじめてのCatfulセット</h2>
+      <p class="cta-subtitle">3つの味をお試しできる特別セット</p>
+      <div class="cta-actions">
+        <div class="shipping-badge">
+          <div class="shipping-circle">送料<br>無料</div>
+        </div>
+        <a href="#" class="btn-cta">
+          今すぐお試しする
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"/>
+          </svg>
+        </a>
+      </div>
+    </div>
+
+    <div class="cta-right">
+      <img src="./Cat_food_pouch_packaging_design.jpeg" alt="Catful 3種セット">
+    </div>
+  </section>
+
+  <!-- ===== FOOTER ===== -->
+  <footer id="faq">
+    <p>© 2024 Catful. All rights reserved.</p>
+  </footer>
+
+  <script>
+    const hamburger  = document.getElementById('hamburger');
+    const mobileMenu = document.getElementById('mobileMenu');
+    const menuClose  = document.getElementById('menuClose');
+
+    hamburger.addEventListener('click', () => {
+      const open = mobileMenu.classList.toggle('is-open');
+      hamburger.setAttribute('aria-expanded', String(open));
+      document.body.style.overflow = open ? 'hidden' : '';
+    });
+
+    menuClose.addEventListener('click', closeMobileMenu);
+
+    function closeMobileMenu() {
+      mobileMenu.classList.remove('is-open');
+      hamburger.setAttribute('aria-expanded', 'false');
+      document.body.style.overflow = '';
+    }
+
+    // Close mobile menu on Escape key
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && mobileMenu.classList.contains('is-open')) {
+        closeMobileMenu();
+      }
+    });
+  </script>
+
+</body>
+</html>
